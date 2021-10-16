@@ -7,8 +7,9 @@
     layout = "us";
 	  xkbOptions = "eurosign:e";
 	  windowManager.i3.enable = true;
+	  windowManager.bspwm.enable = true;
     displayManager.gdm.enable = true;
-    displayManager.setupCommands = "xrandr --output HDMI-A-0 --left-of eDP";
+    displayManager.setupCommands = "xrandr --output HDMI-A-0 --right-of eDP";
     desktopManager.gnome.enable = true;
     windowManager.xmonad = {
 	    enable = true;
@@ -21,6 +22,5 @@
         haskellPackages.xmobar
       ];
 	  };
-	  displayManager.defaultSession = "none+xmonad";
   };
 }

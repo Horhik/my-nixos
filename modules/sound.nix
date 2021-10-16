@@ -1,17 +1,22 @@
 {config, pkgs, ...}:
 {
   ### PIPEWIRE ###
-  hardware.pulseaudio.enable = true;
-  hardware.pulseaudio.support32Bit = true;
-  nixpkgs.config.pulseaudio = true;
+    hardware.pulseaudio.enable = false;
+  # hardware.pulseaudio.support32Bit = true;
+  # nixpkgs.config.pulseaudio = true;
   # sound
-  #  security.rtkit.enable = true;
-  #  services.pipewire = {
-  #   enable = true;
-  #  alsa.enable = true;
-  #  alsa.support32Bit = true;
-  # #jack.enable = true;
-  #  pulse.enable = true;
+
+    security.rtkit.enable = true;
+    services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    jack.enable = true;
+    pulse.enable = true;
+  
+};
+#    services.pipewire = {
+#   };
   #  media-session.enable = true;
   #  };
   #    config = {

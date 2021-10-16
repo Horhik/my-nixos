@@ -1,11 +1,11 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
+# Edet this cnfiguration file to define what should be installed on your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-{ config, pkgs, callPackage, ... }:
 
-{
+{inputs, config, pkgs, callPackage, appimageTools, fetchFromGitHub, mkDerivation, ... }:
+ {
   nix = {
-    package = pkgs.nixUnstable;
+    autoOptimiseStore = true;
+    package = pkgs.nixFlakes;
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
@@ -22,21 +22,35 @@
     ./modules/sound.nix
     ./modules/zsh.nix
     ./fonts.nix
+#    ./modules/musnix
 
-
+    #./themes/global_theme.nix
     ];
   # Use the systemd-boot EFI boot loader.
+  # services.global_theme = {
+  #   enable = true;
+  #   scheme = "solarized";
+  # };
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub.device = "/dev/nvme0n1";
   boot.loader.grub.useOSProber = true; 
+  boot.kernelPackages = pkgs.linuxPackages_zen;
+  boot.kernelParams = ["acpi_osi=Linux" "acpi_backlight=vendor"];
   nixpkgs.config.allowUnfree = true; 
   nixpkgs.config.allowBroken = true; 
   networking.hostName = "lap"; # Define your hostname.
-  environment.variables  = {
+  environment.variables  = 
+#  let theme = import ./themes/solarized.nix; 
+#  in theme.colors // 
+  {
+    QT_STYLE_OVERRIDE="kvantum";
     MAIN_DISK="/dev/nvme0n1";
     TERMINAL="alacritty";
   };
+
+
+#    musnix.enable = true;
   #  let inputs = {
   #  home-manager = {
   #    url = "github:rycee/home-manager/release-20.09";
@@ -56,15 +70,6 @@
   #  nur = final: prev: {
   #        nur = import inputs.nur { nurpkgs = final.unstable; pkgs = final.unstable; };
   #      };
-  #  networking.wireless.enable = true;
-  #	  enable = true;
-  #	  networks={
-  #	  	Goga = {
-  #	  	  hidden = true;
-  #	  	  pskRaw = "aaeb0f9e9709a1f25bc93d34290054849e3f8b37071801bbfa4eef5e2eac5084";
-  #	  	};
-  #	  };
-  #  };
     # Set your time zone.
   time.timeZone = "Europe/Moscow";
 
@@ -73,6 +78,10 @@
   # replicates the default behaviour.
   networking.useDHCP = false;
   networking.interfaces.wlp2s0.useDHCP = true;
+
+
+  virtualisation.docker.enable = true;
+
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -86,7 +95,10 @@
   };
 
   
-
+  networking.networkmanager.enable = true;
+  programs.gnupg.agent.enable = true;
+  programs.dconf.enable = true;
+  programs.light.enable = true;
   # Configure keymap in X11
       # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -99,27 +111,27 @@
   services.xserver.libinput.touchpad.tapping = true;
   services.xserver.libinput.touchpad.disableWhileTyping = true;
   # TODO create touchpad.nix
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  # Define a user account. Don't forget to set a password with ‘passwd’.:wq
   users.defaultUserShell = pkgs.zsh;
   users.users.horhik = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "audio" "docker" "light" "adbusers" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "networkmanager" "audio" "docker" "light" "adbusers" "docker" "display" ]; # Enable ‘sudo’ for the user.
   };
   system.autoUpgrade.enable = true;
   system.autoUpgrade.channel = https://nixos.org/channels/nixos-unstable;
   # List packages installed in system profile. To search, run:
   # $ nix search wget
 
+
+
+
   environment.systemPackages = with pkgs; [
     papirus-icon-theme pop-gtk-theme 
-    wget git vim neovim emacs alacritty xterm zsh tmux stow  dunst
-    # haskellPackages.xmonad haskellPackages.xmonad-contrib haskellPackages.xmonad-utils
-    haskellPackages.xmobar 
-    tabbed
-    i3 surf dmenu st qutebrowser 
+    wget git vim neovim emacs alacritty xterm zsh tmux stow dunst
+    i3 surf dmenu st qutebrowser xmobar
     lightdm rofi nitrogen rofi-emoji
     mononoki fontmatrix
-    firefox 
+    firefox sxhkd xdotool
     connman
     wpa_supplicant python3 xkblayout-state acpi yaru-theme xkb-switch
     pipewire  pulsemixer nerdfonts gnupg
@@ -127,14 +139,34 @@
     anki clang_12 zathura redshift rustup neofetch tree
     killall audacity  thefuck
     polkit etcher gsettings-qt appimage-run pamixer unzip qjackctl gnome3.nautilus bluez pkgconfig pavucontrol bpytop 
-    #nur.repos.reedrw.picom-next-ibhagwan
+    gnome3.gnome-settings-daemon
+    gnome2.GConf
+    gnome.gnome-tweaks
     spotify obsidian discord
     nfs-utils cifs-utils
     nfs-ganesha
     transmission
-  ];
+    libsForQt5.qtstyleplugin-kvantum
 
-  # Some programs need SUID wrappers, can be configured further or are
+wineWowPackages.stable
+    (wine.override { wineBuild = "wine64"; })
+    wineWowPackages.staging
+    (winetricks.override { wine = wineWowPackages.staging; })
+
+    # MUSIC
+    ardour
+    giada
+#    bespokesynth
+
+    carla
+    qjackctl
+
+    
+  ];
+  #nixpkgs.config.packageOverrides = pkgs: {
+  #  giada = ();
+  #};
+    # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
   # programs.gnupg.agent = {
@@ -220,7 +252,7 @@
   nixpkgs.overlays = [
     (import (builtins.fetchTarball {
       url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
-      sha256 = "039kk45r6pqsfd865lgfiwbaqlpll4p9pmndbzhi6l5w5r8dbabm";
+      sha256 = "1p2ikx5krrz6r0x1jyfcb3jvj7yl3pz2l4lz5ilffr6pj1swwlk2";
     }))
   ];
 }

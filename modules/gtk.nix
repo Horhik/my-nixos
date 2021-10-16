@@ -15,9 +15,9 @@
     [Settings]
     gtk-theme-name=Yaru-dark
   '';
-  qt5 = {
-    enable = true;
-    platformTheme = "gtk2";
-    style = "gtk2";
-  };
+ # qt5 = {
+ #   enable = true;
+ #   platformTheme = "gtk2";
+ #   style = "gtk2";
+ # };
 }
