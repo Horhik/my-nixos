@@ -1,26 +1,40 @@
 # This file is generated from "README.org"
 { pkgs, ... }:
 {
-  services.picom.enable = true;
-  services.picom.package = pkgs.nur.repos.reedrw.picom-next-ibhagwan;
-  services.picom.shadow = true;
-  services.picom.vSync = true;
-#  services.picom.inactiveOpacity = "0.8";
-#  services.picom.inactiveDim = "0.7";
-  services.picom.backend = "glx";
-  services.picom.experimentalBackends = true;
-  services.picom.opacityRule = [
+  services.picom = {
+    enable = true;
+    backend = "glx";
+    fade = true;
+    fadeDelta = 5;
+    opacityRules = [
       "80:class_g  = 'Zathura'"
       "80:class_g  = 'Discord'"
       "80:class_g  = 'Emacs'"
       "60:class_g  = 'Anki'"
       "100:class_g = 'keynav'"
-      "85:class_g = 'Alacritty'"
-  ];
-  services.picom.shadowExclude = [
-	"class_g = 'Navigator'"
-  ];
-# services.picom.winTypes = 
+      "95:class_g = 'Alacritty'"
+      "95:class_g = 'alacritty'"
+    ];
+    shadow = true;
+    shadowOpacity = 0.75;
+    shadowExclude = [
+	    "class_g = 'Navigator'"
+	    "class_g = 'Xmonad'"
+	    "class_g = 'xmobar'"
+	    "class_g = 'Xmobar'"
+	    "class_g = 'xmonad'"
+	    "class_g = 'polybar'"
+      "window_type = 'dock'"
+      "_NET_WM_STATE@:32a *= '_NET_WM_STATE_FULLSCREEN'"
+      "class_g = 'keynav'"
+    ];
+
+  };
+  services.picom.vSync = true;
+#  services.picom.inactiveOpacity = "0.8";
+#  services.picom.inactiveDim = "0.7";
+  services.picom.experimentalBackends = true;
+  # services.picom.winTypes = 
 #  {
 # 	normal = { 
 #       	fade = false; 
@@ -51,6 +65,7 @@
 #       	opacity = 0.8; 
 #       };
 #   };
+/*
   services.picom.extraOptions = ''
     #inactive-dim = 0.5;
     #active-opacity = 1.0;
@@ -85,8 +100,8 @@
         "class_g = 'tabbed'"
     ];
   '';
+*/
 }
-
 /*
 {config, pkgs, ...}:
 {

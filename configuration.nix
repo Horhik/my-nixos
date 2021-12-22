@@ -1,15 +1,14 @@
 # Edet this cnfiguration file to define what should be installed on your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{inputs, config, pkgs, callPackage, appimageTools, fetchFromGitHub, mkDerivation, ... }:
+{inputs, config, pkgs, callPackage, appimageTools, fetchFromGitHub, mkDerivation, pkgs-unstable, ... }:
  {
   nix = {
-    autoOptimiseStore = true;
     package = pkgs.nixFlakes;
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
-  }; 
+   }; 
   imports =
     [ # Include the results of the hardware scan.
     ./hardware-configuration.nix
@@ -18,7 +17,8 @@
     ./modules/discord.nix
     ./modules/gtk.nix
     ./modules/hosts.nix
-    #./modules/picom.nix
+    #./modules/vpn.nix
+    ./modules/picom.nix
     ./modules/sound.nix
     ./modules/zsh.nix
     ./fonts.nix
@@ -40,12 +40,13 @@
   nixpkgs.config.allowUnfree = true; 
   nixpkgs.config.allowBroken = true; 
   networking.hostName = "lap"; # Define your hostname.
-  environment.variables  = 
 #  let theme = import ./themes/solarized.nix; 
 #  in theme.colors // 
+  environment.variables  = 
   {
-    QT_STYLE_OVERRIDE="kvantum";
+#    QT_STYLE_OVERRIDE="kvantum";
     MAIN_DISK="/dev/nvme0n1";
+    WIFI_DEVICE="wlp2s0";
     TERMINAL="alacritty";
   };
 
@@ -62,9 +63,8 @@
   #  emacs-overlay.url = "github:nix-community/emacs-overlay";
   #  neovim-overlay.url = "github:nix-community/neovim-nightly-overlay";
   #
-  #  nixpkgs.url = "github:nixos/nixpkgs/nixos-20.09";
+  #  nixpkgs.url = "github:nixos/nixpkgs/nixos-21.11";
   #  unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-  #  master.url = "github:nixos/nixpkgs/master";
   #};
   #
   #  nur = final: prev: {
@@ -82,6 +82,7 @@
 
   virtualisation.docker.enable = true;
 
+  virtualisation.libvirtd.enable = true;
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -103,6 +104,8 @@
       # Enable CUPS to print documents.
   services.printing.enable = true;
   services.blueman.enable = true;
+  services.tor.client.enable = true;
+  services.tor.enable = true;
   hardware.bluetooth.enable = true;
   # Enable sound.
 
@@ -115,7 +118,7 @@
   users.defaultUserShell = pkgs.zsh;
   users.users.horhik = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "audio" "docker" "light" "adbusers" "docker" "display" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "networkmanager" "audio" "docker" "light" "adbusers" "docker" "display" "dialout" "libvirtd"]; # Enable ‘sudo’ for the user.
   };
   system.autoUpgrade.enable = true;
   system.autoUpgrade.channel = https://nixos.org/channels/nixos-unstable;
@@ -128,10 +131,14 @@
   environment.systemPackages = with pkgs; [
     papirus-icon-theme pop-gtk-theme 
     wget git vim neovim emacs alacritty xterm zsh tmux stow dunst
-    i3 surf dmenu st qutebrowser xmobar
+    i3 surf dmenu st 
+    #qutebrowser 
+    xmobar xclip
     lightdm rofi nitrogen rofi-emoji
     mononoki fontmatrix
-    firefox sxhkd xdotool
+    element-desktop 
+    firefox 
+    sxhkd xdotool
     connman
     wpa_supplicant python3 xkblayout-state acpi yaru-theme xkb-switch
     pipewire  pulsemixer nerdfonts gnupg
@@ -146,8 +153,10 @@
     nfs-utils cifs-utils
     nfs-ganesha
     transmission
+    virt-manager
     libsForQt5.qtstyleplugin-kvantum
-
+    taskwarrior timewarrior
+    wirelesstools qdirstat
 wineWowPackages.stable
     (wine.override { wineBuild = "wine64"; })
     wineWowPackages.staging
@@ -163,9 +172,10 @@ wineWowPackages.stable
 
     
   ];
-  #nixpkgs.config.packageOverrides = pkgs: {
-  #  giada = ();
-  #};
+  nixpkgs.config.packageOverrides = pkgs: {
+    giada = pkgs-unstable.giada;
+    xmonad = pkgs-unstable.haskellPackages.xmonad_0_17_0;
+  };
     # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
@@ -249,10 +259,24 @@ wineWowPackages.stable
   programs.adb.enable = true;
   services.emacs.package = pkgs.emacsUnstable;
 
-  nixpkgs.overlays = [
-    (import (builtins.fetchTarball {
-      url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
-      sha256 = "1p2ikx5krrz6r0x1jyfcb3jvj7yl3pz2l4lz5ilffr6pj1swwlk2";
-    }))
-  ];
+  #nixpkgs.overlays = [
+  #  (import (builtins.fetchTarball {
+  #    url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
+  #    sha256 = "1p2ikx5krrz6r0x1jyfcb3jvj7yl3pz2l4lz5ilffr6pj1swwlk2";
+  #  }))
+  #];
+
+   networking.firewall = {
+   # if packets are still dropped, they will show up in dmesg
+   logReversePathDrops = true;
+   # wireguard trips rpfilter up
+   extraCommands = ''
+     ip46tables -t raw -I nixos-fw-rpfilter -p udp -m udp --sport 37581 -j RETURN
+     ip46tables -t raw -I nixos-fw-rpfilter -p udp -m udp --dport 37581 -j RETURN
+   '';
+   extraStopCommands = ''
+     ip46tables -t raw -D nixos-fw-rpfilter -p udp -m udp --sport 37581 -j RETURN || true
+     ip46tables -t raw -D nixos-fw-rpfilter -p udp -m udp --dport 37581 -j RETURN || true
+   '';
+  };
 }

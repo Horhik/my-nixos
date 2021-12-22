@@ -10,7 +10,7 @@
     nur.url = "github:nix-community/NUR";
     emacs-overlay.url = "github:nix-community/emacs-overlay";
 
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs = { url = "github:nixos/nixpkgs/nixos-unstable"; };
     eww.url = "github:elkowar/eww/master";
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     master.url = "github:nixos/nixpkgs/master";
@@ -43,7 +43,7 @@
             home-manager.useUserPackages = true;
             home-manager.users.horhik = {
               imports = [
-                ./modules/picom.nix
+                #./modules/picom.nix
 #                ./modules/tmux.nix
 #                ./modules/bspwm
               ];

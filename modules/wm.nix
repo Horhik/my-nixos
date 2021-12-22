@@ -15,11 +15,12 @@
 	    enable = true;
       enableContribAndExtras = true;
 	    extraPackages = haskellPackages: [
-	      haskellPackages.xmonad-contrib
-        haskellPackages.xmonad-extras
+	      haskellPackages.xmonad-contrib_0_17_0
+        haskellPackages.xmonad-extras_0_17_0
         haskellPackages.xmonad-utils
-	      haskellPackages.xmonad
-        haskellPackages.xmobar
+	      haskellPackages.xmonad_0_17_0
+        haskellPackages.xmobar_0_17_0
+        #haskellPackages.TaskMonad
       ];
 	  };
   };
