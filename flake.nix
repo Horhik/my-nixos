@@ -2,7 +2,7 @@
   description = "Main configuration on top of nix flakes";
   inputs = {
     home-manager = {
-      url = "github:rycee/home-manager/release-21.05";
+      url = "github:rycee/home-manager/release-21.11";
       inputs = {
         nixpkgs.follows = "nixpkgs";
       };
@@ -10,14 +10,14 @@
     nur.url = "github:nix-community/NUR";
     emacs-overlay.url = "github:nix-community/emacs-overlay";
 
-    nixpkgs = { url = "github:nixos/nixpkgs/nixos-unstable"; };
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     eww.url = "github:elkowar/eww/master";
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     master.url = "github:nixos/nixpkgs/master";
 #    musnix = { url = "github:musnix/musnix"; };
   };
 
-  outputs = inputs@{ self, home-manager, nur, nixpkgs, eww, ... }:
+  outputs = inputs@{ self, home-manager, nur, nixpkgs, unstable, eww, ... }:
   let
     inherit (builtins) listToAttrs attrValues attrNames readDir;
     inherit (nixpkgs) lib;
@@ -53,5 +53,5 @@
         ];
         inherit pkgs;
       };
-  };
-}
+    };
+  }

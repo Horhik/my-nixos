@@ -2,6 +2,11 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 {inputs, config, pkgs, callPackage, appimageTools, fetchFromGitHub, mkDerivation, pkgs-unstable, ... }:
+#let
+#  unstableTarball =
+#    fetchTarball
+#      https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz;
+#in
  {
   nix = {
     package = pkgs.nixFlakes;
@@ -37,8 +42,21 @@
   boot.loader.grub.useOSProber = true; 
   boot.kernelPackages = pkgs.linuxPackages_zen;
   boot.kernelParams = ["acpi_osi=Linux" "acpi_backlight=vendor"];
-  nixpkgs.config.allowUnfree = true; 
-  nixpkgs.config.allowBroken = true; 
+#  nixpkgs.config = let 
+    
+#      unstable = import <nixos-unstable> {
+#        config = config.nixpkgs.config;
+#      };
+#  in
+#  {
+#    alloweBroken = true;
+#    alloweUnfree = true;
+#    packageOverrides = pkgs: {
+#      haskellPackages.xmonad = unstable haskellPackages.xmonad_0_17_0
+#      haskellPackages.xmonad-contrib =  haskellPackages.xmonad-contrib_0_17_0
+#      haskellPackages.xmonad-extras =   haskellPackages.xmonad-extras_0_17_0
+#    };
+#  };
   networking.hostName = "lap"; # Define your hostname.
 #  let theme = import ./themes/solarized.nix; 
 #  in theme.colors // 
@@ -157,25 +175,30 @@
     libsForQt5.qtstyleplugin-kvantum
     taskwarrior timewarrior
     wirelesstools qdirstat
-wineWowPackages.stable
-    (wine.override { wineBuild = "wine64"; })
-    wineWowPackages.staging
-    (winetricks.override { wine = wineWowPackages.staging; })
-
+#wineWowPackages.stable
+#    (wine.override { wineBuild = "wine64"; })
+#    wineWowPackages.staging
+#    (winetricks.override { wine = wineWowPackages.staging; })
+#
     # MUSIC
     ardour
     giada
-#    bespokesynth
-
+    bespokesynth
+  
     carla
     qjackctl
 
-    
-  ];
-  nixpkgs.config.packageOverrides = pkgs: {
-    giada = pkgs-unstable.giada;
-    xmonad = pkgs-unstable.haskellPackages.xmonad_0_17_0;
-  };
+        #haskellPackages.TaskMonad
+        rofi-pass rofi-emoji gimp gcc flameshot obs-studio 
+      tdesktop
+      peek libreoffice
+      thunderbird
+      darktable 
+      #XMONAD
+      haskellPackages.xmonad_0_17_0
+      haskellPackages.xmonad-contrib_0_17_0
+      haskellPackages.xmonad-extras_0_17_0   
+];
     # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;

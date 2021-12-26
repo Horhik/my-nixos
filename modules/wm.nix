@@ -14,14 +14,6 @@
     windowManager.xmonad = {
 	    enable = true;
       enableContribAndExtras = true;
-	    extraPackages = haskellPackages: [
-	      haskellPackages.xmonad-contrib_0_17_0
-        haskellPackages.xmonad-extras_0_17_0
-        haskellPackages.xmonad-utils
-	      haskellPackages.xmonad_0_17_0
-        haskellPackages.xmobar_0_17_0
-        #haskellPackages.TaskMonad
-      ];
 	  };
   };
 }
