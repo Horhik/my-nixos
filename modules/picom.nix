@@ -8,12 +8,12 @@
     fadeDelta = 5;
     opacityRules = [
       "80:class_g  = 'Zathura'"
-      "80:class_g  = 'Discord'"
-      "80:class_g  = 'Emacs'"
+      "95:class_g  = 'Discord'"
+      "90:class_g  = 'Emacs'"
       "60:class_g  = 'Anki'"
       "100:class_g = 'keynav'"
-      "95:class_g = 'Alacritty'"
-      "95:class_g = 'alacritty'"
+      "98:class_g = 'Alacritty'"
+      "98:class_g = 'alacritty'"
     ];
     shadow = true;
     shadowOpacity = 0.75;

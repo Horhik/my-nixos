@@ -48,7 +48,7 @@
 #        config = config.nixpkgs.config;
 #      };
 #  in
-#  {
+#nixpkgs.config =  {
 #    alloweBroken = true;
 #    alloweUnfree = true;
 #    packageOverrides = pkgs: {
@@ -56,7 +56,8 @@
 #      haskellPackages.xmonad-contrib =  haskellPackages.xmonad-contrib_0_17_0
 #      haskellPackages.xmonad-extras =   haskellPackages.xmonad-extras_0_17_0
 #    };
-#  };
+#};
+  nixpkgs.config.allowBroken = true;
   networking.hostName = "lap"; # Define your hostname.
 #  let theme = import ./themes/solarized.nix; 
 #  in theme.colors // 
@@ -131,6 +132,16 @@
   services.xserver.libinput.enable = true;
   services.xserver.libinput.touchpad.tapping = true;
   services.xserver.libinput.touchpad.disableWhileTyping = true;
+  services.dbus.socketActivated = true;
+  services = {
+    syncthing = {
+        enable = true;
+        user = "horhiik";
+        dataDir = "/home/horhik/Sync";    # Default folder for new synced folders
+        configDir = "/home/myusername/.config/syncthing";   # Folder for Syncthing's settings and keys
+    };
+};
+
   # TODO create touchpad.nix
   # Define a user account. Don't forget to set a password with ‘passwd’.:wq
   users.defaultUserShell = pkgs.zsh;
@@ -139,6 +150,7 @@
     extraGroups = [ "wheel" "networkmanager" "audio" "docker" "light" "adbusers" "docker" "display" "dialout" "libvirtd"]; # Enable ‘sudo’ for the user.
   };
   system.autoUpgrade.enable = true;
+  nix.gc.automatic = true;
   system.autoUpgrade.channel = https://nixos.org/channels/nixos-unstable;
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -151,10 +163,10 @@
     wget git vim neovim emacs alacritty xterm zsh tmux stow dunst
     i3 surf dmenu st 
     #qutebrowser 
-    xmobar xclip
+    xmobar xclip dbus
     lightdm rofi nitrogen rofi-emoji
     mononoki fontmatrix
-    element-desktop 
+    element-desktop dino
     firefox 
     sxhkd xdotool
     connman
@@ -173,7 +185,7 @@
     transmission
     virt-manager
     libsForQt5.qtstyleplugin-kvantum
-    taskwarrior timewarrior
+    taskwarrior timewarrior tasksh
     wirelesstools qdirstat
 #wineWowPackages.stable
 #    (wine.override { wineBuild = "wine64"; })
@@ -188,6 +200,8 @@
     carla
     qjackctl
 
+    mplayer 
+
         #haskellPackages.TaskMonad
         rofi-pass rofi-emoji gimp gcc flameshot obs-studio 
       tdesktop
@@ -198,85 +212,17 @@
       haskellPackages.xmonad_0_17_0
       haskellPackages.xmonad-contrib_0_17_0
       haskellPackages.xmonad-extras_0_17_0   
+      #haskellPackages.xmonad-dbus
+      haskellPackages.xmonad-utils
+      ghc stack 
+      kalendar
+      vit
+      tasksh
+      lolcat
+      taskwarrior-tui
+
 ];
-    # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
 
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  # system.stateVersion = "20.09"; # Did you read the comment?
-  ### OH MY ZSH ###
-  
-  #programs.zsh.interactiveShellInit = ''
-  #  export ZSH=${pkgs.oh-my-zsh}/share/oh-my-zsh/
-  #  export CC=/usr/bin/clang
-  #  export CXX=/usr/bin/clang++
-  #  export _JAVA_AWT_WM_NONREPARENTING=1
-  #  export ANDROID_SDK_ROOT=/home/horhik/Android/Sdk/
-  #  export NDK_HOME=/home/horhik/Android/Sdk/ndk/22.0.7026061/
-  #  ZSH_THEME="cloud"
-  #  plugins=(git colorize colored-man-pages emoji rustup sudo zsh-syntax-highlighting zsh-autosuggestions zsh-completions)
-  #  autoload -U compinit && compinit
-  #  source $ZSH/oh-my-zsh.sh
-  #  export PATH=$HOME/.local/bin:$PATH
-  #  export PATH=/usr/local/bin:$PATH
-  #  export PATH=$HOME/.cargo/bin:$PATH
-  #  export PATH=$HOME/.emacs.d/bin:$PATH
-  #  export PATH=$HOME/Desktop:$PATH
-  #  export PATH=/home/horhik/code/projects/potato-notify:$PATH
-  #  export PATH="/root/.deno/bin:$PATH"
-  #  alias vim=nvim
-  #  alias vi=vim
-  #  alias libvirtdaemon="sudo start-stop-daemon --start libvirtd"
-  #  alias virtm="sudo start-stop-daemon --start virtlogd &; sudo start-stop-daemon --start libvirtd &; virt-manager &" 
-  #  alias clip=xclip -selection clipboard
-  #  alias suspend="loginctl suspend"
-  #  if [ -f '/home/horhik/yandex-cloud/path.bash.inc' ]; then source '/home/horhik/yandex-cloud/path.bash.inc'; fi
-  #  if [ -f '/home/horhik/yandex-cloud/completion.zsh.inc' ]; then source '/home/horhik/yandex-cloud/completion.zsh.inc'; fi
-  #  alias rd='rustc -g --emit="obj,link"'
-  #  
-  #  
-  #  alias rdr=compile_and_run
-  #  alias aia=ankiaudio
-  #  alias picom="killall picom; picom --experimental-backends &;"
-  #  alias cc="cargo check"
-  #  alias ct="cargo test"
-  #  alias gc="git clone"
-  #  alias gs="git status"
-  #  alias vim="nvim"
-  #  
-  #  neofetch
-  #  
-  #  eval $(thefuck --alias)
-  #  source $ZSH/oh-my-zsh.sh
-  #'';
-  #
-  #
-
-	
-  ### FONTS ###
-
-  
   
 
   programs.adb.enable = true;
@@ -301,5 +247,5 @@
      ip46tables -t raw -D nixos-fw-rpfilter -p udp -m udp --sport 37581 -j RETURN || true
      ip46tables -t raw -D nixos-fw-rpfilter -p udp -m udp --dport 37581 -j RETURN || true
    '';
-  };
+ };
 }

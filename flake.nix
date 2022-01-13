@@ -1,23 +1,23 @@
 {
   description = "Main configuration on top of nix flakes";
   inputs = {
-    home-manager = {
-      url = "github:rycee/home-manager/release-21.11";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-      };
-    };
+   #home-manager = {
+   #  url = "github:rycee/home-manager/release-21.11";
+   #  inputs = {
+   #    nixpkgs.follows = "nixpkgs";
+   #  };
+   #};
     nur.url = "github:nix-community/NUR";
-    emacs-overlay.url = "github:nix-community/emacs-overlay";
+    #emacs-overlay.url = "github:nix-community/emacs-overlay";
 
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "path:/home/horhik/nixpkgs";
     eww.url = "github:elkowar/eww/master";
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     master.url = "github:nixos/nixpkgs/master";
 #    musnix = { url = "github:musnix/musnix"; };
   };
 
-  outputs = inputs@{ self, home-manager, nur, nixpkgs, unstable, eww, ... }:
+  outputs = inputs@{ self,  nur, nixpkgs, unstable, eww, ... }:
   let
     inherit (builtins) listToAttrs attrValues attrNames readDir;
     inherit (nixpkgs) lib;
@@ -37,18 +37,18 @@
         modules = [
           ./configuration.nix
           ./hardware-configuration.nix
-          home-manager.nixosModules.home-manager
-          ({
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.horhik = {
-              imports = [
-                #./modules/picom.nix
-#                ./modules/tmux.nix
-#                ./modules/bspwm
-              ];
-            };
-          })
+         #home-manager.nixosModules.home-manager
+         #({
+         #  home-manager.useGlobalPkgs = true;
+         #  home-manager.useUserPackages = true;
+         #  home-manager.users.horhik = {
+         #    imports = [
+         #      #./modules/picom.nix
+#        #       ./modules/tmux.nix
+#        #       ./modules/bspwm
+         #    ];
+         #  };
+         #})
           { nixpkgs.overlays = [ nur.overlay ]; }
         ];
         inherit pkgs;
