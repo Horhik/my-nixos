@@ -136,9 +136,9 @@
   services = {
     syncthing = {
         enable = true;
-        user = "horhiik";
+        user = "horhik";
         dataDir = "/home/horhik/Sync";    # Default folder for new synced folders
-        configDir = "/home/myusername/.config/syncthing";   # Folder for Syncthing's settings and keys
+        configDir = "/home/horhik/.config/syncthing";   # Folder for Syncthing's settings and keys
     };
 };
 
