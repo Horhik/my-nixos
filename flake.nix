@@ -10,7 +10,8 @@
     nur.url = "github:nix-community/NUR";
     #emacs-overlay.url = "github:nix-community/emacs-overlay";
 
-    nixpkgs.url = "path:/home/horhik/nixpkgs";
+    #nixpkgs.url = "path:/home/horhik/nixpkgs";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     eww.url = "github:elkowar/eww/master";
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     master.url = "github:nixos/nixpkgs/master";

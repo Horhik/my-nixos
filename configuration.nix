@@ -132,7 +132,6 @@
   services.xserver.libinput.enable = true;
   services.xserver.libinput.touchpad.tapping = true;
   services.xserver.libinput.touchpad.disableWhileTyping = true;
-  services.dbus.socketActivated = true;
   services = {
     syncthing = {
         enable = true;
